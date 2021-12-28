@@ -1,7 +1,7 @@
 import re
 from dotenv import load_dotenv
-from github import Github, Issue
-from datetime import datetime, timedelta
+from github import Github, Issue, Project, ProjectCard
+from datetime import date, datetime, time, timedelta
 import os
 load_dotenv()
 
@@ -15,30 +15,38 @@ point_match_regex = re.compile(r'(point)\s+(\d+)')
 g = Github(token)
 repo = g.get_repo(repo_name)
 
-"""CARD"""
-for i in repo.get_projects(): #sprints
-    print(i.created_at)
-    print(i.body)
-    # for j in i.get_columns(): #cols
-    #     for k in j.get_cards(): #cards
-    #         print(k.get_content()) 
-    break
-"""CARD END"""
+all_sprints = repo.get_projects().reversed #THis Can be looped for every active sprint
+sprint = all_sprints[0]
 
-last_24_hr = datetime.now() - timedelta(days=15)
 
-issues = repo.get_issues(state="closed", since=last_24_hr)
+def calculate_latest_sprint_points(sprint:Project):
+    print(sprint.name)
+    print(sprint.created_at)
+    total_sprint_points = 0
+    sprint_day_index = sprint.created_at
+    points_dictionary = {}
+    while (sprint_day_index<datetime.now()):
+        points_dictionary[str(sprint_day_index.date())] = 0
+        sprint_day_index+=timedelta(days=1)
+    for col in sprint.get_columns():
+        for card in col.get_cards():
+            issue_id = int(card.content_url.split("/")[-1])
+            issue = repo.get_issue(number=issue_id)
+            for label in issue.labels:
+                matches = re.findall(point_match_regex, label.name)
+                if len(matches)> 0:
+                    for match in matches:
+                        total_sprint_points += int(match[-1])
+                    for match in matches:
+                        point = int(match[-1])
+                        if issue.state == "closed":
+                            iss_closed_date = str(issue.closed_at.date())
+                            try:
+                                points_dictionary[iss_closed_date] += point
+                            except Exception as e:
+                                points_dictionary[iss_closed_date] = point
+    print(f"Total points for {sprint.name} is {total_sprint_points}")
+    print(points_dictionary)
 
-# for i in issues:
-#     print(i.state)
-#     break
 
-total_points_obtained:int = 0
-for issue in issues:
-    for label in issue.labels:
-        matches = re.findall(point_match_regex, label.name)
-        if len(matches)> 0:
-            for i in matches:
-                print(i)
-                total_points_obtained += int(i[-1])
-print(f"Total Points obtained: {total_points_obtained}")
+calculate_latest_sprint_points(all_sprints[0])
