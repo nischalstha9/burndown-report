@@ -1,7 +1,7 @@
 import re
 from dotenv import load_dotenv
-from github import Github, Issue, Project, ProjectCard
-from datetime import date, datetime, time, timedelta
+from github import Github, Project
+from datetime import datetime,  timedelta
 import os
 load_dotenv()
 
@@ -11,12 +11,14 @@ repo_name = "zite-io/zite"
 
 point_match_regex = re.compile(r'(point)\s+(\d+)')
 
+# new_regex = re.compile(r'([pP]oint)s?[\s*\-_](\d+)')
+
 
 g = Github(token)
 repo = g.get_repo(repo_name)
 
 all_sprints = repo.get_projects().reversed #THis Can be looped for every active sprint
-sprint = all_sprints[0]
+sprint:Project = all_sprints[0]
 
 
 def calculate_latest_sprint_points(sprint:Project):
@@ -50,3 +52,5 @@ def calculate_latest_sprint_points(sprint:Project):
 
 
 calculate_latest_sprint_points(all_sprints[0])
+
+latest_issue = repo.get_issues()
