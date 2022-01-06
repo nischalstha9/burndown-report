@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 from github import Github, Project
 from datetime import datetime,  timedelta
 import os
-load_dotenv()
-
 
 token = os.getenv("GH_PAT")
 repo_name = "zite-io/zite"
