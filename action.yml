@@ -1,0 +1,34 @@
+name: "Github Burn Down Report Generator"
+author: "nischalstha9@gmail.com"
+description: 'Generate BurnDown report on the basis of points assigned to Github Projects'
+inputs:
+  repo:
+    description: 'repo name'
+    required: true
+  token:
+    description: 'Token for the repo. Can be passed in using {{ secrets.GITHUB_TOKEN }}'
+    required: true
+  aws_key:
+    description: 'AWS key. Can be passed in using {{ secrets.AWS_KEY }}'
+    required: true
+  aws_secret:
+    description: 'AWS secret. Can be passed in using {{ secrets.AWS_SECRET }}'
+    required: true
+  aws_bucket:
+    description: 'AWS bucket name. Can be passed in using {{ secrets.AWS_BUCKET }}'
+    required: true
+  aws_region:
+    description: 'AWS region name. Can be passed in using {{ secrets.AWS_REGION }}'
+    required: true
+  closed_issue_number:
+    description: 'Closed Issue Number. Can be passed in using {{ secrets.CLOSED_ISSUE_NUMBER }}'
+    required: true
+  # config:
+  #   description: 'JSON with settings as described in the README'
+  #   required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+branding:
+  icon: 'check-circle'  
+  color: 'green'

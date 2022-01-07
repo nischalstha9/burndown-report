@@ -1,4 +1,3 @@
-import io
 import re
 from utils import calculate_latest_sprint_points, get_optimized_df_for_plot, upload_to_s3_and_get_url
 from dotenv import load_dotenv
@@ -40,9 +39,9 @@ def main():
     plt.xticks(rotation=90)
     fig.set_xlabel('Dates')
     fig.set_ylabel('Points')
-    s = io.BytesIO()
     plot = fig.get_figure()
-    image = plot.savefig(s, format='png', bbox_inches="tight") #main image
+    image = plot.savefig('output.jpg', format='jpg', bbox_inches="tight") #main image
+
 
     image_url = upload_to_s3_and_get_url(KEY, SECRET, region, bucket_name, repo_name)
 
